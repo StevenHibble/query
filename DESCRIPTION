@@ -1,0 +1,21 @@
+Package: query
+Type: Package
+Title: A Simple Way to Manage SQL Queries
+Version: 0.0.0.9000
+Author@R: person("Steven", "Hibble", email = "stevenhibble@gmail.com", 
+          role = c("aut", "cre"))
+Maintainer: Steven Hibble <stevenhibble@gmail.com>
+Description: Keep SQL queries in separate files and manage them easily in R.
+    The 'get_queries()' function finds all SQL queries in a directory and
+    loads them into an R list for easy management and built-in autocomplete.
+    Use the 'query()' function to run queries (either in files or stored as strings).
+    Use glue-style strings to pass parameters to your queries.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+    DBI,
+    glue
+URL: http://github.com/StevenHibble/query
+BugReports: http://github.com/StevenHibble/query/issues
+RoxygenNote: 7.0.2
