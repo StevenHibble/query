@@ -21,7 +21,7 @@ If \code{show_query = TRUE}, a character vector of length 1.
 \description{
 Executes a parameterized query and returns the results as a data frame.
 Optionally, the query can returned as a string instead (\code{show_query = TRUE}).
-\code{\link{glue::glue_sql}} is used to interpolate variables. This is not as safe or efficient
+\code{glue::glue_sql} is used to interpolate variables. This is not as safe or efficient
 as parameterized queries, but provides a consistent interface across SQL backends. Variables can
 be read from the calling environment or passed directly using named parameters.
 

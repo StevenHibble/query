@@ -7,34 +7,26 @@
 get_queries(path = "", pattern = "\\\\.sql$")
 }
 \arguments{
-\item{conn}{A DBI connection object obtained from \code{DBI::dbConnect()}).}
+\item{path}{Path to a directory containing query files.}
 
-\item{query}{A string that is either the path to a query file or a query.}
-
-\item{...}{Named parameters to pass to \code{glue::glue_sql()}).}
+\item{pattern}{A regular expression for finding relevant query files.}
 }
 \value{
-If \code{show_query = FALSE} (default), the query is executed. If \code{show_query = TRUE},
-the query text is returned after parameters have been interpolated.
+A list of character vectors, each of length 1.
 }
 \description{
-Given a connection and a query, the query is executed or printed (\code{show_query = TRUE}).
-\code{\link{glue::glue_sql}} is used to interpolate variables. This is not as safe or efficient
-as parameterized queries, but provides a consistent interface across all SQL backends. Variables can
-be read from the calling environment or passed directly using named parameters.
+Takes a directory and finds all query files and organizes them into a list.
+The list makes for easy autocompletion and interoperability with \code{query()}.
 }
 \examples{
-con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-DBI::dbWriteTable(con, "iris", iris)
-query(con, "select * from iris")
+dr <- tempdir()
+writeLines("SELECT * FROM view1 WHERE col = {val}", paste0(dr, "/view1.sql"))
+writeLines("SELECT * FROM view2 WHERE col = {val}", paste0(dr, "/view2.sql"))
+get_queries(dr)
 
-# Parameters can be passed from the global environment
-val <- "setosa"
-query(con, "select * from iris where species = {val}")
-
-# Parameters can also be passed directly to query()
-query(con, "select * from iris where species = {val}", val = "virginica")
-
-# If you want to view the query without running it, use show_query = TRUE
-query(con, "select * from iris where species = {val}", val = "virginica", show_query = TRUE)
+# The queries are then easy to access and pass to query()
+\dontrun{
+my_queries <- get_queries(dr)
+query(conn, my_queries$view1, val = "abc")
+}
 }

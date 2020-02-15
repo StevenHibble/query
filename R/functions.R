@@ -14,7 +14,7 @@ read_lines <- function(file) readChar(file, file.info(file)$size)
 #'
 #' Executes a parameterized query and returns the results as a data frame.
 #' Optionally, the query can returned as a string instead (\code{show_query = TRUE}).
-#' \code{\link{glue::glue_sql}} is used to interpolate variables. This is not as safe or efficient
+#' \code{glue::glue_sql} is used to interpolate variables. This is not as safe or efficient
 #' as parameterized queries, but provides a consistent interface across SQL backends. Variables can
 #' be read from the calling environment or passed directly using named parameters.
 #'
@@ -56,30 +56,23 @@ query <- function(conn, query, show_query = FALSE, ...) {
 
 #' Read a directory of queries into a single list.
 #'
-#' Given a connection and a query, the query is executed or printed (\code{show_query = TRUE}).
-#' \code{\link{glue::glue_sql}} is used to interpolate variables. This is not as safe or efficient
-#' as parameterized queries, but provides a consistent interface across all SQL backends. Variables can
-#' be read from the calling environment or passed directly using named parameters.
+#' Takes a directory and finds all query files and organizes them into a list.
+#' The list makes for easy autocompletion and interoperability with \code{query()}.
 #'
-#' @param conn A DBI connection object obtained from \code{DBI::dbConnect()}).
-#' @param query A string that is either the path to a query file or a query.
-#' @param ... Named parameters to pass to \code{glue::glue_sql()}).
-#' @return If \code{show_query = FALSE} (default), the query is executed. If \code{show_query = TRUE},
-#' the query text is returned after parameters have been interpolated.
+#' @param path Path to a directory containing query files.
+#' @param pattern A regular expression for finding relevant query files.
+#' @return A list of character vectors, each of length 1.
 #' @examples
-#' con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-#' DBI::dbWriteTable(con, "iris", iris)
-#' query(con, "select * from iris")
+#' dr <- tempdir()
+#' writeLines("SELECT * FROM view1 WHERE col = {val}", paste0(dr, "/view1.sql"))
+#' writeLines("SELECT * FROM view2 WHERE col = {val}", paste0(dr, "/view2.sql"))
+#' get_queries(dr)
 #'
-#' # Parameters can be passed from the global environment
-#' val <- "setosa"
-#' query(con, "select * from iris where species = {val}")
-#'
-#' # Parameters can also be passed directly to query()
-#' query(con, "select * from iris where species = {val}", val = "virginica")
-#'
-#' # If you want to view the query without running it, use show_query = TRUE
-#' query(con, "select * from iris where species = {val}", val = "virginica", show_query = TRUE)
+#' # The queries are then easy to access and pass to query()
+#'\dontrun{
+#' my_queries <- get_queries(dr)
+#' query(conn, my_queries$view1, val = "abc")
+#'}
 #' @export
 get_queries <- function(path = "", pattern = "\\.sql$") {
 
